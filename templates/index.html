@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Change Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: auto;
+        }
+        input[type="file"] {
+            margin-bottom: 1rem;
+        }
+        img {
+            margin-top: 1rem;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Before and After Images</h2>
+        <form id="upload-form">
+            <input type="file" name="before" accept="image/*" required><br>
+            <input type="file" name="after" accept="image/*" required><br>
+            <button type="submit">Detect Change</button>
+        </form>
+        <div id="result">
+            <h3>Change Map:</h3>
+            <img id="change-image" src="" alt="Change map will appear here">
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const blob = await response.blob();
+            const imgUrl = URL.createObjectURL(blob);
+            document.getElementById('change-image').src = imgUrl;
+        });
+    </script>
+</body>
+</html>
