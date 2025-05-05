@@ -31,8 +31,11 @@ app.add_middleware(
 # Serve HTML templates from the "templates" folder
 templates = Jinja2Templates(directory="templates")
 
-# Serve static files 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+# Serve static files - important to enable access to model files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Tell the app this is running on Render
+os.environ['RENDER'] = 'true'
 
 # Initialize the change detection model
 MODEL_PATH = "cdSiamese_model_best.pth" 
@@ -72,4 +75,4 @@ async def predict_change_map(before: UploadFile = File(...), after: UploadFile =
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
     
-#uvicorn main2:app --host 0.0.0.0 --port 8000
+#to start the server - uvicorn main2:app --host 0.0.0.0 --port 8000
