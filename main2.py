@@ -32,7 +32,7 @@ app.add_middleware(
 templates = Jinja2Templates(directory="templates")
 
 # Serve static files - important to enable access to model files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Tell the app this is running on Render
 os.environ['RENDER'] = 'true'

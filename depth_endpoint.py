@@ -15,41 +15,25 @@ router = APIRouter()
 
 # Function to load MiDaS depth estimation model
 def load_depth_model():
-    """Load MiDaS depth estimation model."""
-    # Check if running on Render (production) or locally
-    if os.environ.get('RENDER') == 'true':
-        # Use a local model file path for production
-        try:
-            # Create the model directly
-            from models.midas_small import MidasNet_small
-            model = MidasNet_small(None, features=64, backbone="efficientnet_lite3", 
-                                  exportable=True, non_negative=True, blocks=[1, 2, 3, 4])
-            
-            # Load the model weights
-            model_path = os.path.join(os.path.dirname(__file__), "midas_v21_small_256.pt")
-            state_dict = torch.load(model_path, map_location=torch.device('cpu'))
-            model.load_state_dict(state_dict)
-        except Exception as e:
-            print(f"Error loading local model: {e}")
-            # Fallback to a simpler model approach
-            model = torch.nn.Sequential(
-                torch.nn.Conv2d(3, 16, 3, padding=1),
-                torch.nn.ReLU(),
-                torch.nn.Conv2d(16, 32, 3, padding=1),
-                torch.nn.ReLU(),
-                torch.nn.Conv2d(32, 1, 3, padding=1),
-                torch.nn.Sigmoid()
-            )
-    else:
-        # Use torch.hub in development environment
-        model = torch.hub.load("intel-isl/MiDaS", "MiDaS_small")
+    """Load MiDaS depth estimation model from local file."""
+    try:
+        # Create the model structure (we still need to use torch.hub for the architecture)
+        model = torch.hub.load("intel-isl/MiDaS", "MiDaS_small", pretrained=False, skip_validation=True)
+        
+        # Now load the weights from the local file
+        model_path = "midas_v21_small_256.pt"
+        state_dict = torch.load(model_path, map_location=torch.device('cpu'))
+        model.load_state_dict(state_dict)
+        print(f"Successfully loaded MiDaS model from: {model_path}")
+    except Exception as e:
+        print(f"Failed to load local model: {e}")
+        raise e  # Re-raise the exception to fail if the model can't be loaded
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
     
     # Use custom transforms instead of the default MiDaS transforms
-    # which has a compatibility issue with PIL Images
     transform = transforms.Compose([
         transforms.Resize((256, 256)),
         transforms.ToTensor(),
@@ -58,7 +42,7 @@ def load_depth_model():
     
     return model, transform, device
 
-# Initialize depth estimation model (will be loaded when imported)
+# Initialize depth estimation model 
 depth_model, depth_transform, device = load_depth_model()
 
 # The rest of your file remains unchanged
