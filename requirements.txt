@@ -5,3 +5,6 @@ torchvision
 pillow
 numpy
 python-multipart
+timm 
+matplotlib
+open3d

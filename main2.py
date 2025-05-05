@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 import io
 from PIL import Image
 import uvicorn
@@ -11,23 +12,39 @@ import os
 # Import the change detection model
 from predict import ChangeDetectionPredictor
 
+# Import routers
+from depth_endpoint import router as depth_router
+# from integrated_viewer_endpoint import router as ply_router
+
 app = FastAPI()
+# app.include_router(ply_router, prefix="/api")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development - restrict in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Serve HTML templates from the "templates" folder
 templates = Jinja2Templates(directory="templates")
 
-# Optional: Serve static files if needed (e.g., CSS, JS)
+# Serve static files 
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize the change detection model
-# You should update the path to your trained model file
-MODEL_PATH = "cdSiamese_model_best.pth"  # Update this path to your model file
+MODEL_PATH = "cdSiamese_model_best.pth" 
 predictor = ChangeDetectionPredictor(MODEL_PATH)
+
+# Include the routers for depth and pointcloud endpoints
+app.include_router(depth_router, prefix="/api")
+# app.include_router(pointcloud_router, prefix="/api")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
 
 @app.post("/predict")
 async def predict_change_map(before: UploadFile = File(...), after: UploadFile = File(...)):
@@ -42,7 +59,7 @@ async def predict_change_map(before: UploadFile = File(...), after: UploadFile =
     binary_map = (change_map > 0.5).astype('uint8') * 255
     result_image = Image.fromarray(binary_map)
     
-    # You might want to resize the result to match the original image size
+    # Resize the result to match the original image size
     result_image = result_image.resize(before_image.size, Image.NEAREST)
 
     # Convert result image to bytes for streaming response
@@ -52,6 +69,7 @@ async def predict_change_map(before: UploadFile = File(...), after: UploadFile =
 
     return StreamingResponse(img_byte_arr, media_type="image/png")
 
-
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+#uvicorn main2:app --host 0.0.0.0 --port 8000
