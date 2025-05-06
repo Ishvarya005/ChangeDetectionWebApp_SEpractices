@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SatChange - Login</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #111 0%, #333 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 400px;
+      background: #222;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    .app-title {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    
+    .app-title h1 {
+      color: #e50914;
+      margin: 0 0 5px 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+    
+    .app-title p {
+      color: #ccc;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 25px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .tabs button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      flex: 1;
+      transition: background-color 0.3s;
+    }
+
+    .tabs button:hover {
+      background: #444;
+    }
+
+    .tabs button.active {
+      background: #e50914;
+      font-weight: bold;
+    }
+
+    form {
+      display: none;
+      flex-direction: column;
+    }
+
+    form.active {
+      display: flex;
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      background: #444;
+      color: white;
+      font-size: 15px;
+    }
+    
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.5);
+    }
+
+    button.submit-btn {
+      background: #e50914;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+    
+    button.submit-btn:hover {
+      background: #f40612;
+    }
+
+    .error {
+      color: #ff5757;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+
+    .success {
+      color: #4BB543;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(75, 181, 67, 0.1);
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-title">
+      <h1>SatChange</h1>
+      <p>Satellite Image Change Detection System</p>
+    </div>
+    
+    <div class="tabs">
+      <button id="loginTab" class="active">Login</button>
+      <button id="signupTab">Sign Up</button>
+    </div>
+
+    <form id="loginForm" class="active">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit" class="submit-btn">Login</button>
+    </form>
+
+    <form id="signupForm">
+      <input type="text" id="signupName" placeholder="Name" required />
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+
+    <div class="error" id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYuO4yU8KjT2AKZhqiiJZM8bNWa3tPjcE",
+      authDomain: "cvse-sem6.firebaseapp.com",
+      projectId: "cvse-sem6",
+      storageBucket: "cvse-sem6.firebasestorage.app",
+      messagingSenderId: "599349963100",
+      appId: "1:599349963100:web:949d029dd17bafd24e3999"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Tabs
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const successMsg = document.getElementById("successMsg");
+
+    loginTab.onclick = () => {
+      loginForm.classList.add("active");
+      signupForm.classList.remove("active");
+      loginTab.classList.add("active");
+      signupTab.classList.remove("active");
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+    };
+
+    signupTab.onclick = () => {
+      signupForm.classList.add("active");
+      loginForm.classList.remove("active");
+      signupTab.classList.add("active");
+      loginTab.classList.remove("active");
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+    };
+
+    // Login
+    loginForm.onsubmit = (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          successMsg.textContent = "✅ Login successful! Redirecting...";
+          successMsg.style.display = "block";
+          errorMsg.style.display = "none";
+          setTimeout(() => {
+            window.location.href = "/home";
+          }, 1000);  // wait 1 second to show success
+        })
+        .catch((error) => {
+          errorMsg.textContent = "❌ " + error.message;
+          errorMsg.style.display = "block";
+          successMsg.style.display = "none";
+        });
+    };
+
+    // Sign-up
+    signupForm.onsubmit = (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          successMsg.textContent = "✅ Sign-up successful! Please log in.";
+          successMsg.style.display = "block";
+          errorMsg.style.display = "none";
+        })
+        .catch((error) => {
+          errorMsg.textContent = "❌ " + error.message;
+          errorMsg.style.display = "block";
+          successMsg.style.display = "none";
+        });
+    };
+  </script>
+</body>
+</html>

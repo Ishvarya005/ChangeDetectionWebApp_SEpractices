@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Satellite Image Change Detection</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #141414;
+      color: #ffffff;
+    }
+
+    header {
+      background-color: #1c1c1c;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #e50914;
+    }
+
+    header h1 {
+      color: #e50914;
+      margin: 0;
+    }
+
+    nav {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+      border-bottom: 2px solid #e50914;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #e50914;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      color: #e50914;
+      margin-bottom: 15px;
+    }
+
+    .about {
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 50px;
+      line-height: 1.6;
+    }
+
+    .box-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      background-color: #1c1c1c;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+    }
+
+    .box {
+      flex: 1;
+      min-width: 600px;
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .box h3 {
+      color: #e50914;
+    }
+
+    .box button {
+      padding: 10px 20px;
+      background-color: #e50914;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .box button:hover {
+      background-color: #b20710;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Satellite Image Change Detection</h1>
+  </header>
+
+  <nav>
+    <a href="/home">Home</a>
+    <a href="/detect">Depth Map & Change</a>
+    
+  </nav>
+
+  <div class="container" id="home">
+    <div class="about" id="about">
+      <h2 class="section-title">About My Project</h2>
+      <p><strong>Title:</strong> Depth-Enhanced Change Detection: Evaluating the Contribution of 3D Information in Remote Sensing Imagery Analysis</p>
+
+      <h3 style="color:#e50914;">Objective</h3>
+      <p>
+        The objective of this project is to detect and visualize changes between satellite images taken at different time intervals. By using advanced image processing and integration of 3d depth maps, we identify and highlight differences in terrain, infrastructure, or vegetation that may have occurred over time.
+      </p>
+
+      <h3 style="color:#e50914;">Technologies Used</h3>
+      <ul>
+        <li>Python for backend logic and image processing</li>
+        <li>OpenCV for depth map generation and image analysis</li>
+        <li>Matplotlib and Plotly for visualization</li>
+        <li>HTML, CSS for UI Design</li>
+      </ul>
+
+      <h3 style="color:#e50914;">Working Mechanism</h3>
+      <ol>
+        <li><strong>Depth Map Generation:</strong> Two satellite images are analyzed to create depth maps, which measure the relative distance of objects from the camera/satellite perspective.</li>
+        <li><strong>Change Detection:</strong> Differences between the two depth maps are computed to identify significant changes in the environment (e.g., construction, deforestation).</li>
+        <li><strong>Visualization:</strong> The results are visualized via interactive maps or 3D plots to make interpretation easier for decision-makers.</li>
+      </ol>
+
+      <h3 style="color:#e50914;">Applications</h3>
+      <ul>
+        <li>Urban development tracking</li>
+        <li>Disaster impact assessment (e.g., floods, earthquakes)</li>
+        <li>Agricultural monitoring and forest management</li>
+        <li>Border surveillance and national security</li>
+      </ul>
+
+      <h3 style="color:#e50914;">Conclusion</h3>
+      <p>
+        This system provides a reliable and scalable method for identifying land changes using computer vision and 3D modeling. It is useful for government agencies, researchers, and organizations that rely on satellite surveillance for planning, protection, and prediction.
+      </p>
+    </div>
+
+    <div class="box-wrapper">
+      <div class="box">
+        <h3>Detect Changes & Depth Map Representation</h3>
+        <p>Visualize and compare depth information between two satellite images to detect environmental or structural changes, and use visualization to observe physical changes in terrain and objects with higher spatial detail.</p>
+        <button onclick="location.href='/detect'">Explore Depth Maps & Detect Changes</button>
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>
