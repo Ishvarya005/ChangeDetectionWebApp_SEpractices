@@ -62,6 +62,11 @@ class ChangeDetectionPredictor:
         return self.transform(image)
 
     def predict(self, before_image, after_image, output_path=None):
+        # Input validation
+        if not isinstance(before_image, Image.Image):
+            raise ValueError("Expected 'before_image' to be a PIL.Image.Image object")
+        if not isinstance(after_image, Image.Image):
+            raise ValueError("Expected 'after_image' to be a PIL.Image.Image object")
         with torch.no_grad():
             before_tensor = self.preprocess_image(before_image).unsqueeze(0).to(self.device)
             after_tensor = self.preprocess_image(after_image).unsqueeze(0).to(self.device)
