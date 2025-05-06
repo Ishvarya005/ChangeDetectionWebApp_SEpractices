@@ -2,7 +2,6 @@ import torch
 import numpy as np
 import io
 import base64
-import os
 from PIL import Image
 import torchvision.transforms as transforms
 from fastapi import APIRouter, File, UploadFile
@@ -34,18 +33,17 @@ def load_depth_model():
     model.eval()
     
     # Use custom transforms instead of the default MiDaS transforms
-    transform = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),
+    transform = transforms.Compose([ 
+        transforms.Resize((256, 256)), 
+        transforms.ToTensor(), 
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+    ]) 
     
     return model, transform, device
 
 # Initialize depth estimation model 
 depth_model, depth_transform, device = load_depth_model()
 
-# The rest of your file remains unchanged
 def estimate_depth(image):
     """Estimate depth for a single image."""
     # Convert PIL image to tensor using our transform
@@ -102,13 +100,25 @@ async def generate_depth_maps(before: UploadFile = File(...), after: UploadFile 
     before_depth_norm, before_depth_raw = estimate_depth(before_image)
     after_depth_norm, after_depth_raw = estimate_depth(after_image)
     
-    # Calculate depth difference
-    depth_diff = np.abs(after_depth_raw - before_depth_raw)
+    # Resize depth maps to match each other
+    target_size = (min(before_depth_raw.shape[0], after_depth_raw.shape[0]),
+                   min(before_depth_raw.shape[1], after_depth_raw.shape[1]))  # target size is the min of both images
+    
+    # Resize depth maps to the target size
+    before_depth_resized = np.array(
+        Image.fromarray(before_depth_raw).resize((target_size[1], target_size[0]), Image.BICUBIC)
+    )
+    after_depth_resized = np.array(
+        Image.fromarray(after_depth_raw).resize((target_size[1], target_size[0]), Image.BICUBIC)
+    )
+    
+    # Normalize depth difference
+    depth_diff = np.abs(after_depth_resized - before_depth_resized)
     depth_diff_norm = depth_diff / depth_diff.max()  # Normalize for visualization
     
     # Create colored visualizations
-    before_colored = create_colored_depth_map(before_depth_norm)
-    after_colored = create_colored_depth_map(after_depth_norm)
+    before_colored = create_colored_depth_map(before_depth_resized)
+    after_colored = create_colored_depth_map(after_depth_resized)
     diff_colored = create_colored_depth_map(depth_diff_norm)
     
     # Convert to base64 for sending to frontend
@@ -122,3 +132,11 @@ async def generate_depth_maps(before: UploadFile = File(...), after: UploadFile 
         "after_depth": after_depth_b64,
         "depth_difference": diff_depth_b64
     })
+
+    #Base64 encoding is just a way to represent binary data (like an image file) 
+    # as plain text so it can be safely transmitted in JSON, HTML, or over HTTP
+    #here, json
+    
+
+    
+    
