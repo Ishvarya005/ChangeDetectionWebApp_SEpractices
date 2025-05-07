@@ -444,6 +444,120 @@
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     }
 
+
+    #pair-navigation {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.add-image-btn {
+    background-color: var(--bg-card);
+    color: var(--text-light);
+    border: 2px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .add-image-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(229, 9, 20, 0.3);
+  }
+
+  .add-image-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(229, 9, 20, 0.3);
+  }
+
+  .add-image-btn i {
+    font-size: 18px;
+  }
+
+  /* Variant styles */
+  .add-image-btn.outline {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+
+  .add-image-btn.outline:hover {
+    background-color: rgba(229, 9, 20, 0.1);
+    color: var(--text-light);
+  }
+
+  .add-image-btn.small {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .add-image-btn.large {
+    padding: 16px 24px;
+    font-size: 18px;
+  }
+
+  .add-image-btn.rounded {
+    border-radius: 50px;
+  }
+
+  /* Button group for multiple buttons */
+  .button-group {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  
+#pair-navigation button {
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#pair-navigation button:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#pair-navigation button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #0069d9;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #pair-navigation {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px 0;
+    }
+    
+    #pair-navigation button {
+        min-width: 80px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
     .loading-content h3 {
       margin-top: 0;
       color: var(--primary-color);
@@ -555,398 +669,647 @@
     }
   </style>
 </head>
-<body>
-  <!-- Header Section -->
-  <header class="header">
-    <div class="header-content">
-      <div class="logo">
-        <h1>SatChange</h1>
-        <span>DETECTION SYSTEM</span>
+</header>
+
+<!-- Main Content -->
+<div class="main-container">
+  <h1 class="page-title">Satellite Image Change Detection</h1>
+  <p class="page-subtitle">Upload up to 5 satellite image pairs to analyze changes and generate depth maps</p>
+  
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <!-- Before Images Upload -->
+    <div class="upload-container">
+      <div class="upload-header">
+        <h2><i class="fas fa-calendar-alt"></i> Before Images</h2>
+        <button id="add-before-btn" class="add-image-btn">
+          <i class="fas fa-plus"></i> Add Image
+        </button>
       </div>
-      <div class="user-nav">
-        <a href="/home"><i class="fas fa-home"></i> Home</a>
-        <button class="logout-btn" onclick="location.href='/logout'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <div id="before-images" class="upload-cards">
+        <!-- Image cards will be added here dynamically -->
       </div>
     </div>
-  </header>
 
-  <!-- Main Content -->
-  <div class="main-container">
-    <h1 class="page-title">Satellite Image Change Detection</h1>
-    <p class="page-subtitle">Upload satellite imagery to analyze changes and generate depth maps</p>
-    
-    <!-- Upload Section -->
-    <div class="upload-section">
-      <!-- Before Image Upload -->
-      <div class="upload-card">
-        <div class="card-header">
-          <i class="fas fa-calendar-alt"></i>
+    <!-- After Images Upload -->
+    <div class="upload-container">
+      <div class="upload-header">
+        <h2><i class="fas fa-calendar-check"></i> After Images</h2>
+        <button id="add-after-btn" class="add-image-btn">
+          <i class="fas fa-plus"></i> Add Image
+        </button>
+      </div>
+      <div id="after-images" class="upload-cards">
+        <!-- Image cards will be added here dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button id="detect-btn" class="btn btn-primary" disabled>
+      <i class="fas fa-search"></i> Detect Changes
+    </button>
+    <button id="depth-btn" class="btn btn-secondary" disabled>
+      <i class="fas fa-cubes"></i> Generate Depth Maps
+    </button>
+  </div>
+  
+  <!-- Pair Navigation -->
+  <div id="pair-navigation" class="pair-navigation" style="display: none;">
+    <!-- Navigation buttons will be added here dynamically -->
+  </div>
+
+  <!-- Change Detection Results Section -->
+  <div id="result-section" class="results-card">
+    <div class="results-header">
+      <h2><i class="fas fa-chart-area"></i> Change Detection Results</h2>
+      <div id="detect-time" class="results-time"></div>
+    </div>
+    <div class="results-body">
+      <div class="results-grid">
+        <div class="result-item">
           <h3>Before Image</h3>
-        </div>
-        <div class="card-body">
-          <div class="file-drop-area" id="before-drop-area">
-            <input type="file" id="before-image" accept="image/*" class="file-input">
-            <div class="upload-icon">
-              <i class="fas fa-cloud-upload-alt"></i>
-            </div>
-            <p class="upload-text">Drag & Drop or Click to Upload</p>
-            <p class="file-info">Supported formats: JPG, PNG, TIFF</p>
-          </div>
-          <div class="image-preview" id="before-preview-container">
-            <img id="before-preview" src="" alt="">
-            <button class="remove-btn" id="remove-before"><i class="fas fa-times"></i></button>
+          <div class="result-img-container">
+            <img id="result-before-image" src="" alt="Before Image">
           </div>
         </div>
-      </div>
-
-      <!-- After Image Upload -->
-      <div class="upload-card">
-        <div class="card-header">
-          <i class="fas fa-calendar-check"></i>
+        
+        <div class="result-item">
           <h3>After Image</h3>
-        </div>
-        <div class="card-body">
-          <div class="file-drop-area" id="after-drop-area">
-            <input type="file" id="after-image" accept="image/*" class="file-input">
-            <div class="upload-icon">
-              <i class="fas fa-cloud-upload-alt"></i>
-            </div>
-            <p class="upload-text">Drag & Drop or Click to Upload</p>
-            <p class="file-info">Supported formats: JPG, PNG, TIFF</p>
-          </div>
-          <div class="image-preview" id="after-preview-container">
-            <img id="after-preview" src="" alt="">
-            <button class="remove-btn" id="remove-after"><i class="fas fa-times"></i></button>
+          <div class="result-img-container">
+            <img id="result-after-image" src="" alt="After Image">
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <button id="detect-btn" class="btn btn-primary">
-        <i class="fas fa-search"></i> Detect Changes
-      </button>
-      <button id="depth-btn" class="btn btn-secondary">
-        <i class="fas fa-cubes"></i> Generate Depth Maps
-      </button>
-    </div>
-
-    <!-- Change Detection Results Section -->
-    <div id="result-section" class="results-card">
-      <div class="results-header">
-        <h2><i class="fas fa-chart-area"></i> Change Detection Results</h2>
-        <div id="detect-time" class="results-time"></div>
-      </div>
-      <div class="results-body">
-        <div class="results-grid">
-          <div class="result-item">
-            <h3>Change Map</h3>
-            <div class="result-img-container">
-              <img id="change-image" src="" alt="Change Map">
-              <button id="download-change-map" class="download-btn" style="display: none;">
-                <i class="fas fa-download"></i> Download
-              </button>
-            </div>
+        
+        <div class="result-item">
+          <h3>Change Map</h3>
+          <div class="result-img-container">
+            <img id="change-image" src="" alt="Change Map">
+            <button id="download-change-map" class="download-btn" style="display: none;">
+              <i class="fas fa-download"></i> Download
+            </button>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Depth Map Results Section -->
-    <div id="depth-section" class="results-card">
-      <div class="results-header">
-        <h2><i class="fas fa-layer-group"></i> Depth Map Analysis</h2>
-        <div id="depth-time" class="results-time"></div>
-      </div>
-      <div class="results-body">
-        <div class="results-grid">
-          <div class="result-item">
-            <h3>Before Depth Map</h3>
-            <div class="result-img-container">
-              <img id="before-depth" src="" alt="Before Depth Map">
-              <button id="download-before-depth" class="download-btn" style="display: none;">
-                <i class="fas fa-download"></i> Download
-              </button>
-            </div>
-          </div>
-
-          <div class="result-item">
-            <h3>After Depth Map</h3>
-            <div class="result-img-container">
-              <img id="after-depth" src="" alt="After Depth Map">
-              <button id="download-after-depth" class="download-btn" style="display: none;">
-                <i class="fas fa-download"></i> Download
-              </button>
-            </div>
-          </div>
-
-          <div class="result-item">
-            <h3>Depth Difference</h3>
-            <div class="result-img-container tooltip">
-              <img id="depth-diff" src="" alt="Depth Difference">
-              <span class="tooltiptext">Areas with significant elevation changes appear brighter</span>
-              <button id="download-depth-diff" class="download-btn" style="display: none;">
-                <i class="fas fa-download"></i> Download
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Instructions Section -->
-    <div class="instructions">
-      <h3><i class="fas fa-info-circle"></i> Instructions</h3>
-      <ul>
-        <li>Upload two satellite images of the same location taken at different time periods</li>
-        <li>Click <strong>Detect Changes</strong> to generate a binary change map highlighting areas that have changed</li>
-        <li>Click <strong>Generate Depth Maps</strong> for 3D terrain analysis and visualization</li>
-        <li>Download and save any of the generated maps for your analysis</li>
-      </ul>
     </div>
   </div>
 
-  <!-- Loading Overlay -->
-  <div id="loading" class="loading-overlay">
-    <div class="loading-content">
-      <h3>Processing Images</h3>
-      <div class="spinner">
-        <div class="bounce1"></div>
-        <div class="bounce2"></div>
-        <div class="bounce3"></div>
+  <!-- Depth Map Results Section -->
+  <div id="depth-section" class="results-card">
+    <div class="results-header">
+      <h2><i class="fas fa-layer-group"></i> Depth Map Analysis</h2>
+      <div id="depth-time" class="results-time"></div>
+    </div>
+    <div class="results-body">
+      <div class="results-grid">
+        <div class="result-item">
+          <h3>Before Depth Map</h3>
+          <div class="result-img-container">
+            <img id="before-depth" src="" alt="Before Depth Map">
+            <button id="download-before-depth" class="download-btn" style="display: none;">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </div>
+        </div>
+
+        <div class="result-item">
+          <h3>After Depth Map</h3>
+          <div class="result-img-container">
+            <img id="after-depth" src="" alt="After Depth Map">
+            <button id="download-after-depth" class="download-btn" style="display: none;">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </div>
+        </div>
+
+        <div class="result-item">
+          <h3>Depth Difference</h3>
+          <div class="result-img-container tooltip">
+            <img id="depth-diff" src="" alt="Depth Difference">
+            <span class="tooltiptext">Areas with significant elevation changes appear brighter</span>
+            <button id="download-depth-diff" class="download-btn" style="display: none;">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </div>
+        </div>
       </div>
-      <p>This may take a moment, especially for depth map generation.</p>
     </div>
   </div>
 
-  <script>
-    // DOM Element References
-    const beforeInput = document.getElementById('before-image');
-    const afterInput = document.getElementById('after-image');
-    const beforeDropArea = document.getElementById('before-drop-area');
-    const afterDropArea = document.getElementById('after-drop-area');
-    const beforePreviewContainer = document.getElementById('before-preview-container');
-    const afterPreviewContainer = document.getElementById('after-preview-container');
-    const beforePreview = document.getElementById('before-preview');
-    const afterPreview = document.getElementById('after-preview');
-    const removeBeforeBtn = document.getElementById('remove-before');
-    const removeAfterBtn = document.getElementById('remove-after');
-    const detectBtn = document.getElementById('detect-btn');
-    const depthBtn = document.getElementById('depth-btn');
-    const resultSection = document.getElementById('result-section');
-    const depthSection = document.getElementById('depth-section');
-    const changeImage = document.getElementById('change-image');
-    const beforeDepth = document.getElementById('before-depth');
-    const afterDepth = document.getElementById('after-depth');
-    const depthDiff = document.getElementById('depth-diff');
-    const loadingOverlay = document.getElementById('loading');
-    
-    // Time display elements
-    const detectTimeDisplay = document.getElementById('detect-time');
-    const depthTimeDisplay = document.getElementById('depth-time');
-    
-    // Download buttons
-    const downloadChangeBtn = document.getElementById('download-change-map');
-    const downloadBeforeBtn = document.getElementById('download-before-depth');
-    const downloadAfterBtn = document.getElementById('download-after-depth');
-    const downloadDiffBtn = document.getElementById('download-depth-diff');
+  <!-- Instructions Section -->
+  <div class="instructions">
+    <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+    <ul>
+      <li>Upload up to 5 pairs of satellite images taken at different time periods</li>
+      <li>Each "before" image requires a corresponding "after" image for comparison</li>
+      <li>Click <strong>Detect Changes</strong> to generate binary change maps highlighting areas that have changed</li>
+      <li>Click <strong>Generate Depth Maps</strong> for 3D terrain analysis and visualization</li>
+      <li>Navigate between different image pairs using the buttons that appear after processing</li>
+      <li>Download and save any of the generated maps for your analysis</li>
+    </ul>
+  </div>
+</div>
 
-    let beforeFile = null;
-    let afterFile = null;
+<!-- Loading Overlay -->
+<div id="loading" class="loading-overlay">
+  <div class="loading-content">
+    <h3>Processing Images</h3>
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+    <p>This may take a moment, especially for depth map generation.</p>
+  </div>
+</div>
+
+<script>
+  // Global variables
+  const MAX_IMAGES = 5;
+  let beforeImages = [];
+  let afterImages = [];
+  let currentPairIndex = 0;
+  let changeResults = [];
+  let depthResults = [];
+  
+  // DOM Elements
+  const beforeImagesContainer = document.getElementById('before-images');
+  const afterImagesContainer = document.getElementById('after-images');
+  const addBeforeBtn = document.getElementById('add-before-btn');
+  const addAfterBtn = document.getElementById('add-after-btn');
+  const detectBtn = document.getElementById('detect-btn');
+  const depthBtn = document.getElementById('depth-btn');
+  const resultSection = document.getElementById('result-section');
+  const depthSection = document.getElementById('depth-section');
+  const pairNavigation = document.getElementById('pair-navigation');
+  const resultBeforeImage = document.getElementById('result-before-image');
+  const resultAfterImage = document.getElementById('result-after-image');
+  const changeImage = document.getElementById('change-image');
+  const beforeDepth = document.getElementById('before-depth');
+  const afterDepth = document.getElementById('after-depth');
+  const depthDiff = document.getElementById('depth-diff');
+  const loadingOverlay = document.getElementById('loading');
+  const detectTimeDisplay = document.getElementById('detect-time');
+  const depthTimeDisplay = document.getElementById('depth-time');
+  const downloadChangeBtn = document.getElementById('download-change-map');
+  const downloadBeforeBtn = document.getElementById('download-before-depth');
+  const downloadAfterBtn = document.getElementById('download-after-depth');
+  const downloadDiffBtn = document.getElementById('download-depth-diff');
+  
+  // Initialize with one image slot for each side
+  window.addEventListener('DOMContentLoaded', () => {
+    addImageCard('before');
+    addImageCard('after');
+    updateButtonStates();
+  });
+  
+  // Add image card
+  function addImageCard(type) {
+    const container = type === 'before' ? beforeImagesContainer : afterImagesContainer;
+    const images = type === 'before' ? beforeImages : afterImages;
     
-    // Drag and drop functionality
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      beforeDropArea.addEventListener(eventName, preventDefaults, false);
-      afterDropArea.addEventListener(eventName, preventDefaults, false);
-    });
-    
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
+    if (images.length >= MAX_IMAGES) {
+      alert(`Maximum of ${MAX_IMAGES} ${type} images allowed.`);
+      return;
     }
     
+    const id = Date.now().toString();
+    const cardId = `${type}-card-${id}`;
+    const inputId = `${type}-input-${id}`;
+    const dropAreaId = `${type}-drop-${id}`;
+    const previewContainerId = `${type}-preview-${id}`;
+    const previewId = `${type}-preview-img-${id}`;
+    
+    const card = document.createElement('div');
+    card.className = 'image-card';
+    card.id = cardId;
+    
+    card.innerHTML = `
+      <div class="image-card-header">
+        <div class="image-card-title">${type === 'before' ? 'Before' : 'After'} Image ${images.length + 1}</div>
+        <button class="image-delete-btn" data-id="${id}" data-type="${type}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="file-drop-area" id="${dropAreaId}">
+          <input type="file" id="${inputId}" accept="image/*" class="file-input" data-id="${id}" data-type="${type}">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <p class="upload-text">Drag & Drop or Click to Upload</p>
+          <p class="file-info">Supported formats: JPG, PNG, TIFF</p>
+        </div>
+        <div class="image-preview" id="${previewContainerId}" style="display: none;">
+          <img id="${previewId}" src="" alt="${type} image">
+          <button class="remove-btn" data-id="${id}" data-type="${type}">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(card);
+    
+    // Add image entry to track
+    images.push({
+      id,
+      file: null
+    });
+    
+    // Set up event listeners for the new card
+    setupImageCardEventListeners(id, type);
+    
+    // Update add button states
+    updateAddButtonStates();
+  }
+  
+  // Setup event listeners for image card
+  function setupImageCardEventListeners(id, type) {
+    const dropArea = document.getElementById(`${type}-drop-${id}`);
+    const input = document.getElementById(`${type}-input-${id}`);
+    const previewContainer = document.getElementById(`${type}-preview-${id}`);
+    const preview = document.getElementById(`${type}-preview-img-${id}`);
+    
+    // Delete button
+    document.querySelector(`.image-delete-btn[data-id="${id}"][data-type="${type}"]`).addEventListener('click', function() {
+      deleteImageCard(id, type);
+    });
+    
+    // Remove button
+    document.querySelector(`.remove-btn[data-id="${id}"][data-type="${type}"]`).addEventListener('click', function() {
+      removeImage(id, type);
+    });
+    
+    // Drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
     ['dragenter', 'dragover'].forEach(eventName => {
-      beforeDropArea.addEventListener(eventName, highlight.bind(null, beforeDropArea), false);
-      afterDropArea.addEventListener(eventName, highlight.bind(null, afterDropArea), false);
+      dropArea.addEventListener(eventName, () => highlight(dropArea), false);
     });
     
     ['dragleave', 'drop'].forEach(eventName => {
-      beforeDropArea.addEventListener(eventName, unhighlight.bind(null, beforeDropArea), false);
-      afterDropArea.addEventListener(eventName, unhighlight.bind(null, afterDropArea), false);
+      dropArea.addEventListener(eventName, () => unhighlight(dropArea), false);
     });
     
-    function highlight(element) {
-      element.style.borderColor = 'var(--primary-color)';
-      element.style.backgroundColor = 'rgba(229, 9, 20, 0.05)';
-    }
-    
-    function unhighlight(element) {
-      element.style.borderColor = 'var(--border-color)';
-      element.style.backgroundColor = 'var(--bg-upload)';
-    }
-    
-    beforeDropArea.addEventListener('drop', handleBeforeDrop, false);
-    afterDropArea.addEventListener('drop', handleAfterDrop, false);
-    
-    function handleBeforeDrop(e) {
+    dropArea.addEventListener('drop', function(e) {
       const dt = e.dataTransfer;
-      beforeFile = dt.files[0];
-      handleBeforeFile(beforeFile);
-    }
-    
-    function handleAfterDrop(e) {
-      const dt = e.dataTransfer;
-      afterFile = dt.files[0];
-      handleAfterFile(afterFile);
-    }
+      const file = dt.files[0];
+      handleImageFile(file, id, type);
+    }, false);
     
     // Click to upload
-    beforeDropArea.addEventListener('click', () => {
-      beforeInput.click();
-    });
-    
-    afterDropArea.addEventListener('click', () => {
-      afterInput.click();
+    dropArea.addEventListener('click', () => {
+      input.click();
     });
     
     // File input change
-    beforeInput.addEventListener('change', function(e) {
+    input.addEventListener('change', function(e) {
       if (e.target.files && e.target.files[0]) {
-        beforeFile = e.target.files[0];
-        handleBeforeFile(beforeFile);
+        const file = e.target.files[0];
+        handleImageFile(file, id, type);
       }
     });
+  }
+  
+  // Handle image file
+  // Handle image file
+  function handleImageFile(file, id, type) {
+    if (!file) return;
     
-    afterInput.addEventListener('change', function(e) {
-      if (e.target.files && e.target.files[0]) {
-        afterFile = e.target.files[0];
-        handleAfterFile(afterFile);
-      }
-    });
+    // Check file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/tiff'];
+    if (!validTypes.includes(file.type)) {
+      alert('Invalid file type. Please upload JPG, PNG, or TIFF images only.');
+      return;
+    }
     
-    // File handlers
-    function handleBeforeFile(file) {
+    // Check file size (10MB limit)
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+    if (file.size > MAX_SIZE) {
+      alert('File is too large. Maximum size is 10MB.');
+      return;
+    }
+    
+    const images = type === 'before' ? beforeImages : afterImages;
+    const imageIndex = images.findIndex(img => img.id === id);
+    
+    if (imageIndex !== -1) {
+      // Update file in array
+      images[imageIndex].file = file;
+      
+      // Update preview
+      const preview = document.getElementById(`${type}-preview-img-${id}`);
+      const previewContainer = document.getElementById(`${type}-preview-${id}`);
+      
       const reader = new FileReader();
       reader.onload = function(e) {
-        beforePreview.src = e.target.result;
-        beforePreviewContainer.style.display = 'block';
+        preview.src = e.target.result;
+        previewContainer.style.display = 'block';
+        document.getElementById(`${type}-drop-${id}`).style.display = 'none';
       };
       reader.readAsDataURL(file);
+      
+      // Update buttons state
       updateButtonStates();
     }
+  }
+  
+  // Remove image (clear but keep card)
+  function removeImage(id, type) {
+    const images = type === 'before' ? beforeImages : afterImages;
+    const imageIndex = images.findIndex(img => img.id === id);
     
-    function handleAfterFile(file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        afterPreview.src = e.target.result;
-        afterPreviewContainer.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+    if (imageIndex !== -1) {
+      // Clear file
+      images[imageIndex].file = null;
+      
+      // Hide preview
+      const previewContainer = document.getElementById(`${type}-preview-${id}`);
+      previewContainer.style.display = 'none';
+      
+      // Show drop area
+      document.getElementById(`${type}-drop-${id}`).style.display = 'block';
+      
+      // Reset input
+      document.getElementById(`${type}-input-${id}`).value = '';
+      
+      // Update buttons state
       updateButtonStates();
     }
+  }
+  
+  // Delete image card
+  function deleteImageCard(id, type) {
+    const container = type === 'before' ? beforeImagesContainer : afterImagesContainer;
+    const images = type === 'before' ? beforeImages : afterImages;
+    const cardId = `${type}-card-${id}`;
     
-    // Remove image buttons
-    removeBeforeBtn.addEventListener('click', function() {
-      beforeFile = null;
-      beforePreview.src = '';
-      beforePreviewContainer.style.display = 'none';
-      beforeInput.value = '';
-      updateButtonStates();
-    });
-    
-    removeAfterBtn.addEventListener('click', function() {
-      afterFile = null;
-      afterPreview.src = '';
-      afterPreviewContainer.style.display = 'none';
-      afterInput.value = '';
-      updateButtonStates();
-    });
-    
-    // Update button states
-    function updateButtonStates() {
-      if (beforeFile && afterFile) {
-        detectBtn.disabled = false;
-        depthBtn.disabled = false;
-      } else {
-        detectBtn.disabled = true;
-        depthBtn.disabled = true;
-      }
+    // Remove card from DOM
+    const card = document.getElementById(cardId);
+    if (card) {
+      container.removeChild(card);
     }
     
-    // Initial button states
+    // Remove from array
+    const imageIndex = images.findIndex(img => img.id === id);
+    if (imageIndex !== -1) {
+      images.splice(imageIndex, 1);
+    }
+    
+    // Update card titles
+    updateCardTitles(type);
+    
+    // Update buttons state
     updateButtonStates();
+    updateAddButtonStates();
+  }
+  
+  // Update card titles
+  function updateCardTitles(type) {
+    const container = type === 'before' ? beforeImagesContainer : afterImagesContainer;
+    const cards = container.querySelectorAll('.image-card');
     
-    // Loading overlay functions
-    function showLoading() {
-      loadingOverlay.style.display = 'flex';
-    }
-    
-    function hideLoading() {
-      loadingOverlay.style.display = 'none';
-    }
-    
-    // Detect Changes Button
-    detectBtn.addEventListener('click', async function() {
-      if (!beforeFile || !afterFile) {
-        return;
+    cards.forEach((card, index) => {
+      const titleEl = card.querySelector('.image-card-title');
+      if (titleEl) {
+        titleEl.textContent = `${type === 'before' ? 'Before' : 'After'} Image ${index + 1}`;
       }
+    });
+  }
+  
+  // Update add button states
+  function updateAddButtonStates() {
+    addBeforeBtn.disabled = beforeImages.length >= MAX_IMAGES;
+    addAfterBtn.disabled = afterImages.length >= MAX_IMAGES;
+  }
+  
+  // Update action button states
+  function updateButtonStates() {
+    const hasBeforeFiles = beforeImages.some(img => img.file !== null);
+    const hasAfterFiles = afterImages.some(img => img.file !== null);
+    
+    // Check if we have at least one pair of images
+    const hasPairs = beforeImages.some(before => before.file !== null) && 
+                     afterImages.some(after => after.file !== null);
+    
+    detectBtn.disabled = !hasPairs;
+    depthBtn.disabled = !hasPairs;
+  }
+  
+  // Utility functions
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  function highlight(element) {
+    element.style.borderColor = 'var(--primary-color)';
+    element.style.backgroundColor = 'rgba(229, 9, 20, 0.05)';
+  }
+  
+  function unhighlight(element) {
+    element.style.borderColor = 'var(--border-color)';
+    element.style.backgroundColor = 'var(--bg-upload)';
+  }
+  
+  // Loading overlay functions
+  function showLoading() {
+    loadingOverlay.style.display = 'flex';
+  }
+  
+  function hideLoading() {
+    loadingOverlay.style.display = 'none';
+  }
+  
+  // Setup button click events
+  addBeforeBtn.addEventListener('click', () => addImageCard('before'));
+  addAfterBtn.addEventListener('click', () => addImageCard('after'));
+  
+  // Create pairs from uploaded images
+  function createImagePairs() {
+    const pairs = [];
+    
+    // Get all before images with files
+    const validBeforeImages = beforeImages.filter(img => img.file !== null);
+    const validAfterImages = afterImages.filter(img => img.file !== null);
+    
+    // Create pairs up to the minimum number of images on either side
+    const pairCount = Math.min(validBeforeImages.length, validAfterImages.length);
+    
+    for (let i = 0; i < pairCount; i++) {
+      pairs.push({
+        beforeFile: validBeforeImages[i].file,
+        afterFile: validAfterImages[i].file
+      });
+    }
+    
+    return pairs;
+  }
+  
+  // Update navigation buttons
+  function updatePairNavigation(pairCount) {
+    // Clear existing buttons
+    pairNavigation.innerHTML = '';
+    
+    // Create new buttons
+    for (let i = 0; i < pairCount; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = `Pair ${i + 1}`;
+      btn.dataset.index = i;
+      btn.className = i === currentPairIndex ? 'active' : '';
       
-      const startTime = performance.now();
-      showLoading();
+      btn.addEventListener('click', function() {
+        currentPairIndex = parseInt(this.dataset.index);
+        updateResultDisplay();
+        
+        // Update active state
+        document.querySelectorAll('#pair-navigation button').forEach(b => {
+          b.className = b.dataset.index == currentPairIndex ? 'active' : '';
+        });
+      });
       
-      const formData = new FormData();
-      formData.append('before', beforeFile);
-      formData.append('after', afterFile);
+      pairNavigation.appendChild(btn);
+    }
+    
+    // Show navigation if more than one pair
+    pairNavigation.style.display = pairCount > 1 ? 'flex' : 'none';
+  }
+  
+  // Update results display based on current pair index
+  function updateResultDisplay() {
+    if (changeResults.length > 0 && currentPairIndex < changeResults.length) {
+      const result = changeResults[currentPairIndex];
       
-      try {
+      // Show result images
+      resultBeforeImage.src = result.beforeUrl;
+      resultAfterImage.src = result.afterUrl;
+      changeImage.src = result.changeUrl;
+      
+      // Update download button
+      downloadChangeBtn.style.display = 'inline-flex';
+      downloadChangeBtn.onclick = function() {
+        const link = document.createElement('a');
+        link.href = result.changeUrl;
+        link.download = `change_map_pair_${currentPairIndex + 1}.png`;
+        link.click();
+      };
+    }
+    
+    if (depthResults.length > 0 && currentPairIndex < depthResults.length) {
+      const result = depthResults[currentPairIndex];
+      
+      // Show depth results
+      beforeDepth.src = result.beforeDepthUrl;
+      afterDepth.src = result.afterDepthUrl;
+      depthDiff.src = result.depthDiffUrl;
+      
+      // Update download buttons
+      downloadBeforeBtn.style.display = 'inline-flex';
+      downloadAfterBtn.style.display = 'inline-flex';
+      downloadDiffBtn.style.display = 'inline-flex';
+      
+      downloadBeforeBtn.onclick = function() {
+        const link = document.createElement('a');
+        link.href = result.beforeDepthUrl;
+        link.download = `before_depth_pair_${currentPairIndex + 1}.png`;
+        link.click();
+      };
+      
+      downloadAfterBtn.onclick = function() {
+        const link = document.createElement('a');
+        link.href = result.afterDepthUrl;
+        link.download = `after_depth_pair_${currentPairIndex + 1}.png`;
+        link.click();
+      };
+      
+      downloadDiffBtn.onclick = function() {
+        const link = document.createElement('a');
+        link.href = result.depthDiffUrl;
+        link.download = `depth_difference_pair_${currentPairIndex + 1}.png`;
+        link.click();
+      };
+    }
+  }
+  
+  // Detect Changes Button
+  detectBtn.addEventListener('click', async function() {
+    const pairs = createImagePairs();
+    if (pairs.length === 0) return;
+    
+    const startTime = performance.now();
+    showLoading();
+    changeResults = [];
+    
+    try {
+      // Process each pair
+      for (let i = 0; i < pairs.length; i++) {
+        const pair = pairs[i];
+        const formData = new FormData();
+        formData.append('before', pair.beforeFile);
+        formData.append('after', pair.afterFile);
+        
         const response = await fetch('/predict', {
           method: 'POST',
           body: formData
         });
         
         const blob = await response.blob();
-        const imgUrl = URL.createObjectURL(blob);
-        changeImage.src = imgUrl;
-        resultSection.style.display = 'block';
+        const changeUrl = URL.createObjectURL(blob);
         
-        const endTime = performance.now();
-        const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
-        detectTimeDisplay.textContent = `Processed in ${timeTaken}s`;
-        
-        // Show download button
-        downloadChangeBtn.style.display = 'inline-flex';
-        
-        downloadChangeBtn.onclick = function() {
-          const link = document.createElement('a');
-          link.href = imgUrl;
-          link.download = 'change_map.png';
-          link.click();
-        };
-        
-        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred during change detection. Please try again.');
-      } finally {
-        hideLoading();
+        // Store the result with preview URLs
+        changeResults.push({
+          beforeUrl: URL.createObjectURL(pair.beforeFile),
+          afterUrl: URL.createObjectURL(pair.afterFile),
+          changeUrl: changeUrl
+        });
       }
-    });
+      
+      const endTime = performance.now();
+      const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+      detectTimeDisplay.textContent = `Processed ${pairs.length} pairs in ${timeTaken}s`;
+      
+      // Set current index to first pair
+      currentPairIndex = 0;
+      
+      // Update navigation
+      updatePairNavigation(pairs.length);
+      
+      // Show results
+      resultSection.style.display = 'block';
+      
+      // Update display
+      updateResultDisplay();
+      
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during change detection. Please try again.');
+    } finally {
+      hideLoading();
+    }
+  });
+  
+  // Generate Depth Maps Button
+  depthBtn.addEventListener('click', async function() {
+    const pairs = createImagePairs();
+    if (pairs.length === 0) return;
     
-    // Generate Depth Maps Button
-    depthBtn.addEventListener('click', async function() {
-      if (!beforeFile || !afterFile) {
-        return;
-      }
-      
-      const startTime = performance.now();
-      showLoading();
-      
-      const formData = new FormData();
-      formData.append('before', beforeFile);
-      formData.append('after', afterFile);
-      
-      try {
+    const startTime = performance.now();
+    showLoading();
+    depthResults = [];
+    
+    try {
+      // Process each pair
+      for (let i = 0; i < pairs.length; i++) {
+        const pair = pairs[i];
+        const formData = new FormData();
+        formData.append('before', pair.beforeFile);
+        formData.append('after', pair.afterFile);
+        
         const response = await fetch('/api/depth_maps', {
           method: 'POST',
           body: formData
@@ -954,64 +1317,46 @@
         
         const data = await response.json();
         
-        beforeDepth.src = `data:image/png;base64,${data.before_depth}`;
-        afterDepth.src = `data:image/png;base64,${data.after_depth}`;
-        depthDiff.src = `data:image/png;base64,${data.depth_difference}`;
-        depthSection.style.display = 'block';
+        // Create URLs from base64 data
+        const beforeDepthUrl = `data:image/png;base64,${data.before_depth}`;
+        const afterDepthUrl = `data:image/png;base64,${data.after_depth}`;
+        const depthDiffUrl = `data:image/png;base64,${data.depth_difference}`;
         
-        const endTime = performance.now();
-        const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
-        depthTimeDisplay.textContent = `Processed in ${timeTaken}s`;
-        
-        // Show and enable download buttons
-        downloadBeforeBtn.style.display = 'inline-flex';
-        downloadAfterBtn.style.display = 'inline-flex';
-        downloadDiffBtn.style.display = 'inline-flex';
-        
-        downloadBeforeBtn.onclick = function() {
-          const link = document.createElement('a');
-          link.href = beforeDepth.src;
-          link.download = 'before_depth.png';
-          link.click();
-        };
-        
-        downloadAfterBtn.onclick = function() {
-          const link = document.createElement('a');
-          link.href = afterDepth.src;
-          link.download = 'after_depth.png';
-          link.click();
-        };
-        
-        downloadDiffBtn.onclick = function() {
-          const link = document.createElement('a');
-          link.href = depthDiff.src;
-          link.download = 'depth_difference.png';
-          link.click();
-        };
-        
-        depthSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while generating depth maps. Please try again.');
-      } finally {
-        hideLoading();
+        // Store results
+        depthResults.push({
+          beforeDepthUrl,
+          afterDepthUrl,
+          depthDiffUrl
+        });
       }
-    });
-    
-    // Add visual feedback when buttons are clicked
-    document.querySelectorAll('.btn').forEach(button => {
-      button.addEventListener('mousedown', function() {
-        this.style.transform = 'scale(0.98)';
-      });
       
-      button.addEventListener('mouseup', function() {
-        this.style.transform = '';
-      });
+      const endTime = performance.now();
+      const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+      depthTimeDisplay.textContent = `Processed ${pairs.length} pairs in ${timeTaken}s`;
       
-      button.addEventListener('mouseleave', function() {
-        this.style.transform = '';
-      });
-    });
-  </script>
-</body>
+      // Set current index to first pair if not already set
+      if (currentPairIndex >= pairs.length) {
+        currentPairIndex = 0;
+      }
+      
+      // Update navigation if not already created
+      if (pairNavigation.children.length !== pairs.length) {
+        updatePairNavigation(pairs.length);
+      }
+      
+      // Show depth section
+      depthSection.style.display = 'block';
+      
+      // Update display
+      updateResultDisplay();
+      
+      depthSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while generating depth maps. Please try again.');
+    } finally {
+      hideLoading();
+    }
+  });
+</script>
 </html>
